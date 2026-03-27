@@ -4,16 +4,19 @@ int main (int argc, char *argv[])
 {
     int num = 0; // Watch out for race conditions!
     int thread_num, nthreads = 16;
+    //if OMP compiled, sets the number of threads to nthreads
     #ifdef _OPENMP
     omp_set_num_threads(nthreads);
     #endif
     printf("Testing OpenMP, you should see each thread print...\n");
     #pragma omp parallel
     {
+        //sets the parallel thread number to the number omp_get_thread_num() returns
         thread_num = omp_get_thread_num();
         
         #pragma omp critical
         {
+            //increments num safely
             #ifdef _OPENMP
             num += 1; // THREAD SAFE INCREMENT
             printf("This thread = %d, num = %d\n", thread_num, num);
